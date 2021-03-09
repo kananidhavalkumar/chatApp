@@ -19,7 +19,6 @@ import {
 } from "./modules/FirebaseModule";
 import "webrtc-adapter";
 import VideoChat from "./VideoChat";
-import { firestore } from "firebase";
 
 class VideoChatContainer extends React.Component {
   constructor(props) {
@@ -30,6 +29,16 @@ class VideoChatContainer extends React.Component {
       localStream: null,
       localConnection: null,
       to: null,
+      config: {
+        audio: true,
+
+        video: {
+          width: { max: 1024 },
+          height: { max: 1024 },
+          aspectRatio: { ideal: 16 / 9 },
+          facingMode: "user",
+        },
+      },
     };
     this.localVideoRef = React.createRef();
     this.remoteVideoRef = React.createRef();
@@ -37,12 +46,12 @@ class VideoChatContainer extends React.Component {
 
   componentDidMount = async () => {
     // getting local video stream
-   
-    const localStream = await initiateLocalStream();
+  
+    const localStream = await initiateLocalStream(this.state.config);
     this.localVideoRef.srcObject = localStream;
-    
-    const localConnection = await initiateConnection();
 
+    const localConnection = await initiateConnection();
+   
     this.props.database
       .collection("/users")
       .doc(this.props.username)
@@ -56,14 +65,12 @@ class VideoChatContainer extends React.Component {
         });
       });
 
-  
     await this.props.database
       .collection("/notifs")
       .doc(this.props.username)
       .get()
       .then((doc) => {
         if (doc.exists && doc.data().offer) {
-          
           listenToConnectionEvents(
             localConnection,
             this.props.username,
@@ -106,19 +113,18 @@ class VideoChatContainer extends React.Component {
                 database,
                 this.props.username
               );
-              
-             const simpleCrypto = new SimpleCrypto(this.props.encrypt);
+
+              const simpleCrypto = new SimpleCrypto(this.props.encrypt);
               this.props.database.collection("messages").add({
-                image:false,
-                text:  simpleCrypto.encrypt("i want to call you please click on video button"),
+                image: false,
+                text: simpleCrypto.encrypt(
+                  "i want to call you please click on video button"
+                ),
                 createdAt: new Date(),
                 username: this.props.username,
               });
-
             })
             .catch((e) => console.log(e));
-
-         
         }
       })
       .catch((error) => {
@@ -148,7 +154,6 @@ class VideoChatContainer extends React.Component {
   }
 
   onVideoOff = () => {
-  
     var localvideoRef = this.state.localStream;
 
     localvideoRef.getVideoTracks()[0].enabled = !localvideoRef.getVideoTracks()[0]
@@ -157,9 +162,55 @@ class VideoChatContainer extends React.Component {
       localStream: localvideoRef,
     });
   };
+
+  onVideoChange = async () => {
+    const supports = navigator.mediaDevices.getSupportedConstraints();
+    if (!supports["facingMode"]) {
+      alert("This browser does not support facingMode!");
+      return;
+    } else {
+      this.state.localStream.getTracks().forEach(function (track) {
+        track.stop();
+      });
+      var newConfig = this.state.config;
+
+      newConfig.video.facingMode =
+        newConfig.video.facingMode === "user" ? "environment" : "user";
+
+      const localStream = await initiateLocalStream(newConfig);
+      this.localVideoRef.srcObject = localStream;
+
+      this.state.localConnection.getSenders().map((sender) =>
+        sender.replaceTrack(
+          localStream.getTracks().find((t) => t.kind === sender.track.kind),
+          localStream
+        )
+      );
+
+      // this.state.localConnection.addStream(localStream)
+
+      // this.state.localConnection.removeStream(this.state.localStream)
+      // console.log(localStream .getVideoTracks()[0].getConstraints());
+      this.setState({ config: newConfig, localStream });
+
+      //
+
+      //  stream
+      //     .getVideoTracks()[0]
+      //     .applyConstraints(options)
+      //     .then(function () {
+      //      console.log(stream
+      //       .getVideoTracks()[0].getConstraints())
+      //     })
+      //     .catch(e=>alert(e));
+      //this.setState({ localStream: stream });
+      // this.setState({ localStream: stream });
+      // this.localVideoRef.srcObject = stream;
+    }
+  };
   onAudioOff = () => {
     var localvideoRef = this.state.localStream;
-  
+
     localvideoRef.getAudioTracks()[0].enabled = !localvideoRef.getAudioTracks()[0]
       .enabled;
     this.setState({
@@ -208,14 +259,16 @@ class VideoChatContainer extends React.Component {
   };
 
   hangupEvent = () => {
-    this.state.connectedUser = null;
+  
     // this.state.localConnection.close();
 
     this.state.localStream.getTracks().forEach(function (track) {
       track.stop();
     });
-    this.state.localConnection.onicecandidate = null;
-    this.state.localConnection.onaddstream = null;
+    var conn =  this.state.localConnection;
+    conn.onicecandidate = null;
+    conn.onaddstream = null;
+    this.setState({localConnection:conn,connectedUser:null})
     this.props.database.collection("/notifs").doc(this.props.username).set({});
     this.setState({
       database: null,
@@ -227,13 +280,16 @@ class VideoChatContainer extends React.Component {
   };
   hangUp = () => {
     doLeaveNotif(this.state.to, this.props.database, this.props.username);
-    this.state.connectedUser = null;
+  
     //this.state.localConnection.close();
     this.state.localStream.getTracks().forEach(function (track) {
       track.stop();
     });
-    this.state.localConnection.onicecandidate = null;
-    this.state.localConnection.onaddstream = null;
+    var conn =  this.state.localConnection;
+    conn.onicecandidate = null;
+    conn.onaddstream = null;
+    this.setState({localConnection:conn,connectedUser:null})
+
     this.props.database.collection("/notifs").doc(this.props.username).set({});
     this.setState({
       database: null,
@@ -308,6 +364,8 @@ class VideoChatContainer extends React.Component {
         setRemoteVideoRef={this.setRemoteVideoRef}
         connectedUser={this.state.connectedUser}
         onAudioOff={this.onAudioOff}
+        onVideoChange={this.onVideoChange}
+        onVideoOff={this.onVideoOff}
       />
     );
   }

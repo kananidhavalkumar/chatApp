@@ -12,19 +12,9 @@ export const createOffer = async (connection, localStream, userToCall, doOffer, 
   }
 }
 
-export const initiateLocalStream = async () => {
+export const initiateLocalStream = async (config) => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-     
-      video: {
-        width: {max: 1024},
-        height: {max: 1024},
-        aspectRatio: {ideal: 16/9}
-       }
-      
-
-  })
+    const stream = await navigator.mediaDevices.getUserMedia(config)
     return stream
   } catch (exception) {
     console.error(exception)

@@ -1,7 +1,6 @@
 import React from "react";
 
 import "firebase/database";
-import classnames from "classnames";
 import { Box, Button, Grid } from "@material-ui/core";
 
 export default class VideoChat extends React.Component {
@@ -93,6 +92,18 @@ export default class VideoChat extends React.Component {
   render() {
     return (
       <Grid container>
+        <Grid item xs={12}>
+          <Box textAlign="center" padding="10px" >
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={() => this.props.hangUp()}
+            >
+              Hang Up
+            </Button>
+          </Box>
+        </Grid>
+
         <Grid
           item
           container
@@ -104,32 +115,44 @@ export default class VideoChat extends React.Component {
           }}
           xs={12}
         >
-         <Grid item xs={3}>
+          <Grid item xs={3}>
             <Box textAlign="center" paddingRight="10px" paddingLeft="10px">
               <Button
                 variant="contained"
                 fullWidth
-                onClick={() =>{
-                
-                this.setState({ brightNess: !this.state.brightNess })}
-              }
+                onClick={() => {
+                  this.setState({ brightNess: !this.state.brightNess });
+                }}
               >
-               light
+                light
               </Button>
             </Box>
           </Grid>
-         
-          <Grid item xs={6}>
+
+          <Grid item xs={3}>
             <Box textAlign="center" paddingRight="10px">
               <Button
                 variant="contained"
                 fullWidth
-                onClick={() => this.props.hangUp()}
+                onClick={() => this.props.onVideoOff()}
               >
-                Hang Up
+                on/Off
               </Button>
             </Box>
           </Grid>
+
+          <Grid item xs={3}>
+            <Box textAlign="center" paddingRight="10px">
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => this.props.onVideoChange()}
+              >
+                Camera
+              </Button>
+            </Box>
+          </Grid>
+
           <Grid item xs={3}>
             <Box textAlign="center" paddingRight="10px">
               <Button

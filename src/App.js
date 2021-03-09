@@ -15,24 +15,22 @@ const firestore = firebase.firestore();
 
 const storage = firebase.storage();
 
-var username = "";
 function App() {
   const [UserName, setUserName] = useState();
   const [auth, setauth] = useState(0);
-  const [loading, setloading] = useState(false);
   const [videoChat, setvideoChat] = useState(false);
   const [encrypt, setencrypt] = useState();
-  username = UserName;
+
 
   return (
     <Grid container>
-      {auth == 0 ? (
+      {auth === 0 ? (
         <Login
           setAuth={setauth}
           setUserName={setUserName}
           setencrypt={setencrypt}
         ></Login>
-      ) : auth == 1 ? (
+      ) : auth === 1 ? (
         videoChat ? (
           <VideoChatContainer
           key={videoChat}

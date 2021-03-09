@@ -27,7 +27,7 @@ function MessagesList({ messages, username, simpleCrypto }) {
         ? messages.map((e) => {
             i++;
 
-            var index = Math.floor(Math.random() * 10);
+            {/* var index = Math.floor(Math.random() * 10); */}
             let txt = "";
             try {
               txt = simpleCrypto.decrypt(e.text);
@@ -41,7 +41,7 @@ function MessagesList({ messages, username, simpleCrypto }) {
               t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds();
             const messageClass = e.username === username ? "sent" : "received";
 
-            if (txt != "")
+            if (txt !== "")
               return (
                 <div
                   className={`message ${messageClass}`}

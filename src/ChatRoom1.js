@@ -1,6 +1,6 @@
 import { Box, Button, Grid, TextField } from "@material-ui/core";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import SimpleCrypto from "simple-crypto-js";
 import MessagesList from "./MessagesList";
@@ -169,7 +169,7 @@ export default React.memo(ChatRoom1);
 function ChatRoomInput({ onSend ,handleFireBaseUpload}) {
   const [message, setMessage] = useState("");
   const [imageAsFile, setimageAsFile] = useState("");
-  const [isImage, setIsImage] = useState(false);
+  // const [isImage, setIsImage] = useState(false);
 
 
 
@@ -246,13 +246,13 @@ function ChatRoomInput({ onSend ,handleFireBaseUpload}) {
             style={{ lineHeight: "43px" }}
             
             onClick={async(e) => {
-              if (message != "") 
+              if (message !== "") 
              // handleFireBaseUpload(e,imageAsFile)
               onSend(e, message,false);
              
               setMessage("");
 
-              if(imageAsFile!="")
+              if(imageAsFile!=="")
 
                 handleFireBaseUpload(e,imageAsFile)
                 setimageAsFile("")

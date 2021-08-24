@@ -10,10 +10,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 function Login({ setAuth, setUserName, setencrypt }) {
   const [inputData, setinputData] = useState({
-    email: "abckanani1@gmail.com",
-    password: "Kds@9202",
+    email: "",
+    password: "",
     login: false,
-    key: "Gudlo",
+    key: "",
   });
 
   function changeHandler(e) {

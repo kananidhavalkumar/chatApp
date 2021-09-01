@@ -11,11 +11,20 @@ p {
     color: white;
     text-align: center;
   }
-  
+  .timeCss{
+    width: calc(100%-40vw);
+    text-align: center;
+    color: "gray" 
+  }
   .message {
     display: flex;
+   
     align-items: center;
+  
   }
+
+
+
   p{
       overflow-wrap: break-word;
   }

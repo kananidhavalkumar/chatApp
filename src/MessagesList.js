@@ -14,20 +14,16 @@ function MessagesList({ messages, username, simpleCrypto }) {
     "#ADD8E6",
     "#D2B48C",
   ];
-  useEffect(() => {
-    return () => {
-      var elem = document.getElementById("chatId");
-      elem.scrollTop = elem.scrollHeight;
-    };
-  }, []);
-  var i = -1;
-  return (
-    <>
-      {messages
-        ? messages.map((e) => {
-            i++;
 
-            {/* var index = Math.floor(Math.random() * 10); */}
+  var i = -1;
+ 
+      if(messages){
+        if(messages.length){
+          return <>{ messages.map((e) => {
+            i++;
+            {
+              /* var index = Math.floor(Math.random() * 10); */
+            }
             let txt = "";
             try {
               txt = simpleCrypto.decrypt(e.text);
@@ -36,12 +32,13 @@ function MessagesList({ messages, username, simpleCrypto }) {
             var t = e.createdAt
               ? new Date(e.createdAt.seconds * 1000)
               : new Date();
-
+              
             var timeOf =
               t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds();
             const messageClass = e.username === username ? "sent" : "received";
-
-            if (txt !== "")
+          
+            if (txt.trim() !== "")
+             { 
               return (
                 <div
                   className={`message ${messageClass}`}
@@ -49,34 +46,45 @@ function MessagesList({ messages, username, simpleCrypto }) {
                 >
                   <p
                     style={{
-                      margin: "5px",
                       maxWidth: "40vw",
-                      backgroundColor: `${color[i % 10]}`,
+                      // border: "1px solid",
+                      // margin: "5px",
+                     
+                      // borderColor: `${color[i % 10]}`,
                     }}
                   >
-                  {e.image?<ModalImage
-                 
-                 large={txt}
-                
-                 alt="image"
-               ></ModalImage>:""}
+                  
+                    {e.image ? (
+                      
+                      <ModalImage large={txt} alt="Image"  onerror="this.style.display='none'" ></ModalImage>
+                    ) : (
+                      ""
+                    )}
 
-                    {e.image?"click to view":txt}
+                    {e.image ? "" : txt}
                   </p>
-                  <span style={{ color: "gray", paddingLeft: "10px" }}>
+                  <span className={'timeCss'}>
                     {timeOf}
                   </span>
                 </div>
               );
-            else
-              return (
-                ""
-                
-              );
-          })
-        : "No Chat"}
-    </>
-  );
-}
+              
+                     
+                    
+                    }
+            else return "";
+          })}</>
+         
+        }else{
+          return (<h1 style={{}}>No Data Found</h1>)
+        }
+      }else{
+        return (<h1 style={{}}>Loading...</h1> )
+      }
+    }
+
+   
+
+
 
 export default React.memo(MessagesList);

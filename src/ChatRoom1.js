@@ -1,6 +1,6 @@
 import { Box, Button, Grid, TextField } from "@material-ui/core";
 
-import React, { useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import SimpleCrypto from "simple-crypto-js";
 import MessagesList from "./MessagesList";
@@ -13,6 +13,7 @@ function ChatRoom1({ firestore, username, encrypt,storage , setvideoChat}) {
   
   const simpleCrypto = new SimpleCrypto(encrypt);
 
+
   async function deleteCollection(db, collectionPath) {
     const collectionRef = db.collection(collectionPath);
     const query = collectionRef.orderBy("__name__");
@@ -22,6 +23,13 @@ function ChatRoom1({ firestore, username, encrypt,storage , setvideoChat}) {
     });
   }
 
+  useEffect(() => {
+    
+    const container1 = document.getElementById('chatId')
+   
+    container1.scrollTop =container1.scrollHeight
+
+  }, [messages])
   async function deleteQueryBatch(db, query, resolve) {
     const snapshot = await query.get();
 
@@ -112,6 +120,7 @@ function ChatRoom1({ firestore, username, encrypt,storage , setvideoChat}) {
   }
 
 
+
   return (  
     <Grid container>
       <Grid
@@ -125,20 +134,18 @@ function ChatRoom1({ firestore, username, encrypt,storage , setvideoChat}) {
         }}
         xs={12}
       >
-        <Grid item xs={4}>
-           Key : "{encrypt}"
-        </Grid>
+       
         <Grid item xs={4}>
           <Box textAlign="center" paddingRight="10px">
-            <Button variant="contained" fullWidth onClick={()=>setvideoChat(true)}>
-              Video
+            <Button variant="outlined" fullWidth onClick={()=>setvideoChat(true)}>
+              VC
             </Button>
           </Box>
         </Grid>
-        <Grid item xs={4}>
-          <Box textAlign="center" paddingRight="10px">
-            <Button variant="contained" fullWidth onClick={handleClear}>
-              Clear
+        <Grid item xs={8}>
+          <Box textAlign="center">
+            <Button variant="outlined" fullWidth onClick={handleClear}>
+            {encrypt}
             </Button>
           </Box>
         </Grid>
@@ -241,7 +248,7 @@ function ChatRoomInput({ onSend ,handleFireBaseUpload}) {
       >
         <Box textAlign="center" paddingRight="10px">
           <Button
-            variant="contained"
+            variant="outlined"
             fullWidth
             style={{ lineHeight: "43px" }}
             

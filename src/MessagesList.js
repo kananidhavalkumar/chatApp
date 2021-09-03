@@ -37,7 +37,7 @@ function MessagesList({ messages, username, simpleCrypto }) {
               t.getHours() + ":" + t.getMinutes() + ":" + t.getSeconds();
             const messageClass = e.username === username ? "sent" : "received";
           
-            if (txt && txt.trim() !== "")
+            if (txt.trim && txt.trim() !== "")
              { 
               return (
                 <div
